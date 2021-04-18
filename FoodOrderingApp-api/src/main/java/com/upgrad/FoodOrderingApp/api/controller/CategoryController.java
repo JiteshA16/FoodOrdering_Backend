@@ -9,7 +9,6 @@ import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,13 @@ public class CategoryController {
     @Autowired
     private ItemService itemService;
 
-    @RequestMapping(method = RequestMethod.GET, path = "category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    /**
+     * This method is used to get all the restaurant categories.
+     */
+    /**
+     * @return -  ResponseEntity object
+     */
+    @RequestMapping(method = RequestMethod.GET, path = "/category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<CategoryListResponse>> getAllCategories() {
         List<CategoryEntity> categoryEntities = categoryService.getAllCategories();
 
@@ -47,7 +52,16 @@ public class CategoryController {
         return new ResponseEntity<List<CategoryListResponse>>(categoryListResponses, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    /**
+     * This method receives category Id as path variable.
+     * This method is used to get the category as per category uuid and it fetches all the items belonging to a category.
+     */
+    /**
+     * @param categoryId - category UUID
+     * @return -  ResponseEntity object
+     * @exception - CategoryNotFoundException
+     */
+    @RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoryList> getCategoryById(@PathVariable("category_id") final String categoryId) throws CategoryNotFoundException {
         CategoryEntity categoryEntity = categoryService.getCategoryById(categoryId);
 

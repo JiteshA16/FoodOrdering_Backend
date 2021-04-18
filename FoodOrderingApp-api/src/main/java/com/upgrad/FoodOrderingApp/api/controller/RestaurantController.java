@@ -33,6 +33,12 @@ public class RestaurantController {
     @Autowired
     private ItemService itemService;
 
+    /**
+     * This method is used to get all the restaurants.
+     */
+    /**
+     * @return -  ResponseEntity object
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<RestaurantList>> getAllRestaurants() {
         List<RestaurantEntity> restaurantEntities = restaurantService.getAllRestaurants();
@@ -42,6 +48,15 @@ public class RestaurantController {
         return new ResponseEntity<List<RestaurantList>>(restaurantList, HttpStatus.OK);
     }
 
+    /**
+     * This method receives restaurant name as path variable.
+     * This method is used to get the restaurants as per restaurant name.
+     */
+    /**
+     * @param restaurantName - restaurant name
+     * @return -  ResponseEntity object
+     * @exception - RestaurantNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant/name/{reastaurant_name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<RestaurantList>> getRestaurantsByName(@PathVariable("reastaurant_name") final String restaurantName) throws RestaurantNotFoundException {
         List<RestaurantEntity> restaurantEntities = restaurantService.getRestaurantByName(restaurantName);
@@ -51,6 +66,15 @@ public class RestaurantController {
         return new ResponseEntity<List<RestaurantList>>(restaurantList, HttpStatus.OK);
     }
 
+    /**
+     * This method receives categoryId as path variable.
+     * This method is used to get the restaurants as per category uuid.
+     */
+    /**
+     * @param categoryId - category uuid
+     * @return -  ResponseEntity object
+     * @exception - CategoryNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<RestaurantList>> getRestaurantsByCategoryId(@PathVariable("category_id") final String categoryId) throws CategoryNotFoundException {
         CategoryEntity categoryEntity = categoryService.getCategoryById(categoryId);
@@ -62,6 +86,15 @@ public class RestaurantController {
         return new ResponseEntity<List<RestaurantList>>(restaurantList, HttpStatus.OK);
     }
 
+    /**
+     * This method receives restaurant id as path variable.
+     * This method is used to get the restaurants as per restaurant id.
+     */
+    /**
+     * @param restaurantId - restaurant uuid
+     * @return -  ResponseEntity object
+     * @exception - RestaurantNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/api/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse> getRestaurantByRestaurantId(@PathVariable("restaurant_id") final String restaurantId) throws RestaurantNotFoundException {
         RestaurantEntity restaurantEntity = restaurantService.getRestaurantById(restaurantId);
@@ -105,6 +138,17 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantDetailsResponse>(restaurantDetailsResponse, HttpStatus.OK);
     }
 
+    /**
+     * This method receives restaurant id as path variable, accesstoken as request header, customer rating as request param.
+     * This method is used to update restaurant rating as per restaurant uuid and new customer rating.
+     */
+    /**
+     * @param restaurantId - restaurant uuid
+     * @param accessToken - accessToken received from the request header
+     * @param customerRating - customer rating
+     * @return -  ResponseEntity object
+     * @exception - RestaurantNotFoundException, AuthorizationFailedException, InvalidRatingException
+     */
     @RequestMapping(method = RequestMethod.PUT, path = "/api/restaurant/{restaurant_id}", params = "customer_rating", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantUpdatedResponse> updateRestaurantDetails(@PathVariable("restaurant_id") final String restaurantId, @RequestHeader("authorization") final String accessToken, @RequestParam(value = "customer_rating") final Double customerRating) throws RestaurantNotFoundException, AuthorizationFailedException, InvalidRatingException {
         /*
@@ -122,6 +166,15 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantUpdatedResponse>(restaurantUpdatedResponse, HttpStatus.OK);
     }
 
+    /**
+     * This method receives restaurant entity list as parameter.
+     * This method is used to transform List<RestaurantEntity> into List<RestaurantList>.
+     */
+    /**
+     * @param restaurantEntities - list of all restaurant entities
+     * @return -  List<RestaurantList>
+     * @exception - none
+     */
     private List<RestaurantList> getRestaurantList(List<RestaurantEntity> restaurantEntities) {
         List<RestaurantList> restaurantList = new ArrayList<>();
 
@@ -156,12 +209,31 @@ public class RestaurantController {
         return restaurantList;
     }
 
+    /**
+     * This method receives restaurant enitity as parameter.
+     * This method is used to get the address state.
+     */
+    /**
+     * @param restaurantEntity - restaurant entity
+     * @return -  RestaurantDetailsResponseAddressState object
+     * @exception - none
+     */
     private RestaurantDetailsResponseAddressState getRestaurantState(RestaurantEntity restaurantEntity) {
         return new RestaurantDetailsResponseAddressState()
                         .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid()))
                         .stateName(restaurantEntity.getAddress().getState().getStateName());
     }
 
+    /**
+     * This method receives restaurant entity and address state as parameters.
+     * This method is used to get the complete restaurant address.
+     */
+    /**
+     * @param restaurantEntity - restaurant entity
+     * @param addressStateResponse - RestaurantDetailsResponseAddressState
+     * @return -  RestaurantDetailsResponseAddress object
+     * @exception - none
+     */
     private RestaurantDetailsResponseAddress getRestaurantAddress(RestaurantEntity restaurantEntity, RestaurantDetailsResponseAddressState addressStateResponse) {
         return new RestaurantDetailsResponseAddress()
                             .id(UUID.fromString(restaurantEntity.getAddress().getUuid()))

@@ -16,6 +16,12 @@ public class CategoryDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * This method is used to fetch all categories from the category table in the database.
+     */
+    /**
+     * @return - List<CategoryEntity>
+     */
     public List<CategoryEntity> getAllCategories() {
         try {
             List<CategoryEntity> categoryList = entityManager.createNamedQuery("getAllCategoriesSortedByName", CategoryEntity.class)
@@ -26,6 +32,14 @@ public class CategoryDao {
         }
     }
 
+    /**
+     * This method receives category uuid.
+     * This method is used to fetch category based on category uuid from the category table in the database.
+     */
+    /**
+     * @param uuid - category uuid
+     * @return - CategoryEntity
+     */
     public CategoryEntity getCategoryById(String uuid) {
         try {
             CategoryEntity categoryEntity = entityManager.createNamedQuery("getCategoryById", CategoryEntity.class)
@@ -37,6 +51,14 @@ public class CategoryDao {
         }
     }
 
+    /**
+     * This method receives RestaurantEntity object.
+     * This method is used to fetch categories depending on restaurant from the restaurant_category table in the database.
+     */
+    /**
+     * @param restaurantEntity - RestaurantEntity object
+     * @return - List<RestaurantCategoryEntity>
+     */
     public List<RestaurantCategoryEntity> getCategoriesByRestaurant(RestaurantEntity restaurantEntity) {
         try {
             List<RestaurantCategoryEntity> restaurantCategoryEntities = entityManager.createNamedQuery("getCategoriesByRestaurant", RestaurantCategoryEntity.class)

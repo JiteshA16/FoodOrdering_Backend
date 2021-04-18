@@ -11,11 +11,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "category_item")
+@Table(name = "restaurant_item")
 @NamedQueries({
-        @NamedQuery(name = "getItemsByCategoryId", query = "select cie from CategoryItemEntity cie where cie.categoryId = :categoryId order by cie.itemId.itemName asc")
+        @NamedQuery(name = "getItemsByRestaurant", query = "select rie from RestaurantItemEntity rie where rie.restaurantId = :restaurantId order by rie.itemId.itemName asc")
 })
-public class CategoryItemEntity implements Serializable {
+public class RestaurantItemEntity implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -24,13 +24,13 @@ public class CategoryItemEntity implements Serializable {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "item_id")
-    private ItemEntity itemId;
+    @JoinColumn(name = "restaurant_id")
+    private RestaurantEntity restaurantId;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "category_id")
-    private CategoryEntity categoryId;
+    @JoinColumn(name = "item_id")
+    private ItemEntity itemId;
 
     public Integer getId() {
         return id;
@@ -40,20 +40,20 @@ public class CategoryItemEntity implements Serializable {
         this.id = id;
     }
 
+    public RestaurantEntity getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(RestaurantEntity restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     public ItemEntity getItemId() {
         return itemId;
     }
 
     public void setItemId(ItemEntity itemId) {
         this.itemId = itemId;
-    }
-
-    public CategoryEntity getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(CategoryEntity categoryId) {
-        this.categoryId = categoryId;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
+import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
+import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
+import com.upgrad.FoodOrderingApp.service.entity.RestaurantCategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import org.springframework.stereotype.Repository;
 
@@ -32,5 +35,32 @@ public class RestaurantDao {
         } catch (NoResultException nre) {
             return null;
         }
+    }
+
+    public RestaurantEntity getRestaurantById(String restaurantId) {
+        try {
+            RestaurantEntity restaurantEntity = entityManager.createNamedQuery("getRestaurantById", RestaurantEntity.class)
+                                                             .setParameter("uuid", restaurantId)
+                                                             .getSingleResult();
+            return restaurantEntity;
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    public List<RestaurantCategoryEntity> getRestaurantsByCategoryId(CategoryEntity categoryEntity) {
+        try {
+            List<RestaurantCategoryEntity> restaurantCategoryEntities = entityManager.createNamedQuery("getRestaurantsByCategoryId", RestaurantCategoryEntity.class)
+                    .setParameter("categoryId", categoryEntity)
+                    .getResultList();
+            return restaurantCategoryEntities;
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity) {
+        entityManager.merge(restaurantEntity);
+        return restaurantEntity;
     }
 }

@@ -4,6 +4,7 @@ import com.upgrad.FoodOrderingApp.api.model.CategoryList;
 import com.upgrad.FoodOrderingApp.api.model.CategoryListResponse;
 import com.upgrad.FoodOrderingApp.api.model.ItemList;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
+import com.upgrad.FoodOrderingApp.service.businness.ItemService;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
@@ -28,6 +29,9 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private ItemService itemService;
+
     @RequestMapping(method = RequestMethod.GET, path = "category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<CategoryListResponse>> getAllCategories() {
         List<CategoryEntity> categoryEntities = categoryService.getAllCategories();
@@ -47,7 +51,7 @@ public class CategoryController {
     public ResponseEntity<CategoryList> getCategoryById(@PathVariable("category_id") final String categoryId) throws CategoryNotFoundException {
         CategoryEntity categoryEntity = categoryService.getCategoryById(categoryId);
 
-        List<ItemEntity> itemEntities = categoryService.getItemsForCategory(categoryEntity);
+        List<ItemEntity> itemEntities = itemService.getItemsForCategory(categoryEntity);
 
         List<ItemList> itemLists = new ArrayList<>();
 

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "restaurant_item")
 @NamedQueries({
-        @NamedQuery(name = "getItemsByRestaurant", query = "select rie from RestaurantItemEntity rie where rie.restaurantId = :restaurantId order by rie.itemId.itemName asc")
+        @NamedQuery(name = "getItemsByRestaurant", query = "select rie from RestaurantItemEntity rie where rie.restaurantId = :restaurantId order by lower(rie.itemId.itemName) asc")
 })
 public class RestaurantItemEntity implements Serializable {
 

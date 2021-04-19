@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Table(name = "restaurant_category")
 @NamedQueries({
         @NamedQuery(name = "getRestaurantsByCategoryId", query = "select rce from RestaurantCategoryEntity rce where rce.categoryId = :categoryId"),
-        @NamedQuery(name = "getCategoriesByRestaurant", query = "select rce from RestaurantCategoryEntity rce where rce.restaurantId = :restaurantId order by rce.categoryId.categoryName asc")
+        @NamedQuery(name = "getCategoriesByRestaurant", query = "select rce from RestaurantCategoryEntity rce where rce.restaurantId = :restaurantId order by lower(rce.categoryId.categoryName) asc")
 })
 public class RestaurantCategoryEntity implements Serializable {
     @Id

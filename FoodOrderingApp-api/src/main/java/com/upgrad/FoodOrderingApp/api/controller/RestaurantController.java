@@ -97,7 +97,7 @@ public class RestaurantController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/api/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse> getRestaurantByRestaurantId(@PathVariable("restaurant_id") final String restaurantId) throws RestaurantNotFoundException {
-        RestaurantEntity restaurantEntity = restaurantService.getRestaurantById(restaurantId);
+        RestaurantEntity restaurantEntity = restaurantService.getRestaurantByUUID(restaurantId);
 
         List<CategoryEntity> categoryEntities = categoryService.getCategoriesForRestaurant(restaurantEntity);
 
@@ -155,7 +155,7 @@ public class RestaurantController {
         Need to perform customer auth token validation
          */
 
-        RestaurantEntity restaurantEntity = restaurantService.getRestaurantById(restaurantId);
+        RestaurantEntity restaurantEntity = restaurantService.getRestaurantByUUID(restaurantId);
 
         RestaurantEntity updatedRestaurantEntity = restaurantService.updateRestaurantEntity(restaurantEntity, customerRating);
 

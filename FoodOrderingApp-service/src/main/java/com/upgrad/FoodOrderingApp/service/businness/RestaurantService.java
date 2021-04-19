@@ -77,7 +77,7 @@ public class RestaurantService {
      * @return -  RestaurantEntity
      * @exception - RestaurantNotFoundException.
      */
-    public RestaurantEntity getRestaurantById(String restaurantId) throws RestaurantNotFoundException {
+    public RestaurantEntity getRestaurantByUUID(String restaurantId) throws RestaurantNotFoundException {
         if (restaurantId.isEmpty() || restaurantId == null) {
             throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
         }

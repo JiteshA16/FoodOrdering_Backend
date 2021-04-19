@@ -28,7 +28,7 @@ public class ItemService {
         List<ItemEntity> itemEntities = new ArrayList<>();
 
         for (CategoryItemEntity categoryItemEntity: categoryItemEntities) {
-            itemEntities.add(getItemById(categoryItemEntity.getItemId().getUuid()));
+            itemEntities.add(getItemByUUID(categoryItemEntity.getItemId().getUuid()));
         }
         return itemEntities;
     }
@@ -42,7 +42,7 @@ public class ItemService {
      * @return -  ItemEntity object
      * @exception - none.
      */
-    private ItemEntity getItemById(String itemId) {
+    private ItemEntity getItemByUUID(String itemId) {
         return itemDao.getItemById(itemId);
     }
 

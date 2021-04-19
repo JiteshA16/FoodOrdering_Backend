@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerAuthenticationService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.*;
@@ -21,6 +22,9 @@ public class CustomerController {
 
     @Autowired
     private CustomerAuthenticationService customerAuthenticationService;
+
+    @Autowired
+    private CustomerService customerService;
 
     /**
      * This method is for customer signup. This method receives the object of SignupCustomerRequest type with
@@ -90,7 +94,7 @@ public class CustomerController {
     /**
      * Request mapping to sign-out customer
      *
-     * @param acessToken
+     * @param authToken
      * @return LogoutResponse
      * @throws SignOutRestrictedException
      */
@@ -99,8 +103,10 @@ public class CustomerController {
             path = "/customer/logout",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> logout(
-            @RequestHeader("authorization") final String acessToken) throws SignOutRestrictedException {
-        CustomerEntity customerEntity = customerAuthenticationService.logout(acessToken);
+            @RequestHeader("authorization") final String authToken) throws SignOutRestrictedException {
+        final String accessToken = authToken.split("Bearer ")[1];
+
+        CustomerEntity customerEntity = customerAuthenticationService.logout(accessToken);
         LogoutResponse logoutResponse =
                 new LogoutResponse().id(customerEntity.getUuid()).message("LOGGED OUT SUCCESSFULLY");
         return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
@@ -110,7 +116,6 @@ public class CustomerController {
      * Controller method to handle PUT request to update customer details
      *
      * @param customerEditRequest
-     * @param customerUuid
      * @param authorization
      * @return UpdateCustomerResponse
      * @throws AuthorizationFailedException
@@ -123,20 +128,23 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(
             UpdateCustomerRequest customerEditRequest,
-            @PathVariable("customerId") final String customerUuid,
             @RequestHeader("authorization") final String authorization)
             throws AuthorizationFailedException, UpdateCustomerException {
         // Set the user typed content as the new content of the Question entity
         String firstName = customerEditRequest.getFirstName();
         String lastName = customerEditRequest.getLastName();
 
+        String accessToken = authorization.split("Bearer ")[1];
+
+        CustomerEntity customer = customerService.getCustomer(accessToken);
+
         // Authorize user and edit the question with Uuid passed
         CustomerEntity customerEntity =
-                customerAuthenticationService.updateCustomer(customerUuid, firstName, lastName, authorization);
+                customerAuthenticationService.updateCustomer(customer.getUuid(), firstName, lastName, accessToken);
 
         // Set the Uuid and status of edited question in response
         UpdateCustomerResponse customerEditResponse =
-                new UpdateCustomerResponse().id(customerEntity.getUuid()).status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+                new UpdateCustomerResponse().id(customerEntity.getUuid()).firstName(customerEntity.getFirstName()).lastName(customerEntity.getLastName()).status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
         return new ResponseEntity<UpdateCustomerResponse>(customerEditResponse, HttpStatus.OK);
     }
 
@@ -144,7 +152,6 @@ public class CustomerController {
      * Controller method to handle PUT request to update customer password
      *
      * @param updatePasswordRequest
-     * @param customerUuid
      * @param authorization
      * @return UpdateCustomerResponse
      * @throws AuthorizationFailedException
@@ -157,16 +164,19 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdatePasswordResponse> updatePassword(
             UpdatePasswordRequest updatePasswordRequest,
-            @PathVariable("customerId") final String customerUuid,
             @RequestHeader("authorization") final String authorization)
             throws AuthorizationFailedException, UpdateCustomerException {
         // Set the user typed content as the new content of the Question entity
         String newPassword = updatePasswordRequest.getNewPassword();
         String oldPassword = updatePasswordRequest.getOldPassword();
 
+        String accessToken = authorization.split("Bearer ")[1];
+
+        CustomerEntity customer = customerService.getCustomer(accessToken);
+
         // Authorize user and edit the question with Uuid passed
         CustomerEntity customerEntity =
-                customerAuthenticationService.updateCustomerPassword(customerUuid, newPassword, oldPassword, authorization);
+                customerAuthenticationService.updateCustomerPassword(customer.getUuid(), newPassword, oldPassword, authorization);
 
         // Set the Uuid and status of edited question in response
         UpdatePasswordResponse updatePasswordResponse =

@@ -192,7 +192,7 @@ public class CustomerAuthenticationService {
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomerPassword(final String customerId, final String password, final String oldPassword, final String accessToken)
             throws AuthorizationFailedException, UpdateCustomerException {
-        CustomerAuthEntity customerAuthEntity = this.customerAuthDao.getCustomerAuthByToken(accessToken);
+        CustomerAuthEntity customerAuthEntity = this.customerAuthDao.getCustomerAuthByToken(accessToken.split("Bearer ")[1]);
 
         if (password.length() == 0 || oldPassword.length() == 0) {
             throw new UpdateCustomerException("UCR-003", "No field should be empty");
@@ -213,7 +213,9 @@ public class CustomerAuthenticationService {
             throw new UpdateCustomerException("UCR-001", "Weak password!");
         }
 
-        if (!oldPassword.equals(getCurrentPassword(accessToken))) {
+        String encryptedOldPassword = passwordCryptographyProvider.encrypt(oldPassword, customerAuthEntity.getCustomerEntity().getSalt());
+
+        if (!encryptedOldPassword.equals(customerAuthEntity.getCustomerEntity().getPassword())) {
             throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
         }
 
@@ -224,7 +226,10 @@ public class CustomerAuthenticationService {
                     "USR-001", "User with entered uuid to be deleted does not exist");
         }
 
-        existingUser.setPassword(password);
+        String[] encryptedPassword = passwordCryptographyProvider.encrypt(password);
+        existingUser.setSalt(encryptedPassword[0]);
+        existingUser.setPassword(encryptedPassword[1]);
+
         existingUser = this.customerDao.updateCustomerEntity(existingUser);
         return existingUser;
     }
@@ -308,7 +313,7 @@ public class CustomerAuthenticationService {
 
     // checks whether the authorization is in correct format in the database
     private String getCurrentPassword(final String authorization) {
-        byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+        byte[] decode = Base64.getDecoder().decode(authorization.split("Bearer ")[1]);
         String decodedText = new String(decode);
         String[] decodedArray = decodedText.split(":");
         //String contactNumber = decodedArray[0];
